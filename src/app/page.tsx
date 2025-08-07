@@ -21,26 +21,29 @@ export default function Dashboard() {
       </div>
 
       <div className="relative z-10 w-full max-w-3xl">
-        {/* Centered Logo */}
-        <div className="flex items-center justify-center mb-10">
+        {/* Logo + Tagline */}
+        <div className="flex flex-col items-center justify-center mb-8">
           <Image
             src="/docuright-logo.png"
             alt="DocuRight AI Logo"
-            width={120}
-            height={120}
-            className="rounded-none drop-shadow-md"
+            width={80}
+            height={80}
+            className="rounded-none drop-shadow-md mb-2"
             priority
           />
+          <div className="text-lg text-gray-500 mt-2 text-center font-semibold">
+            The fastest way to automate legal paperwork with AI.
+          </div>
         </div>
 
         {/* Dashboard Card Grid */}
         {docType === 'none' && (
           <div>
             <h1 className="text-3xl font-bold mb-6 text-center text-gray-800">Generate a Document</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 place-items-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 place-items-center">
               {/* NDA Card */}
               <button
-                className="p-6 rounded-xl bg-white shadow-lg hover:shadow-2xl flex flex-col items-center transition-all hover:bg-indigo-50 w-full"
+                className="p-6 rounded-xl bg-white shadow-lg hover:shadow-2xl flex flex-col items-center transition-all duration-200 hover:bg-indigo-50 w-full transform hover:-translate-y-2"
                 onClick={() => setDocType('nda')}
               >
                 <div className="mb-2 w-16 h-16 flex items-center justify-center bg-indigo-100 rounded-full">
@@ -53,7 +56,7 @@ export default function Dashboard() {
               </button>
               {/* Offer Letter Card */}
               <button
-                className="p-6 rounded-xl bg-white shadow-lg hover:shadow-2xl flex flex-col items-center transition-all hover:bg-green-50 w-full"
+                className="p-6 rounded-xl bg-white shadow-lg hover:shadow-2xl flex flex-col items-center transition-all duration-200 hover:bg-green-50 w-full transform hover:-translate-y-2"
                 onClick={() => setDocType('offer')}
               >
                 <div className="mb-2 w-16 h-16 flex items-center justify-center bg-green-100 rounded-full">
@@ -64,6 +67,18 @@ export default function Dashboard() {
                   Generate professional employment offer letters instantly.
                 </div>
               </button>
+              {/* Coming soon */}
+              <div
+                className="p-6 rounded-xl bg-gray-100 shadow-inner flex flex-col items-center justify-center w-full opacity-70"
+              >
+                <div className="mb-2 w-16 h-16 flex items-center justify-center bg-gray-300 rounded-full">
+                  <span role="img" aria-label="Coming soon" className="text-3xl">✨</span>
+                </div>
+                <div className="font-semibold text-xl mb-1 text-gray-500">More templates</div>
+                <div className="text-gray-400 text-sm text-center">
+                  Coming soon...
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -88,6 +103,11 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Polished Footer */}
+      <footer className="mt-16 z-10 w-full relative text-center text-xs text-gray-400 opacity-90 pb-4">
+        © {new Date().getFullYear()} DocuRight AI. All rights reserved.
+      </footer>
     </main>
   );
 }
