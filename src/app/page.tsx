@@ -11,8 +11,10 @@ export default function Dashboard() {
   const [docType, setDocType] = useState<DocType>('none');
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-green-100 overflow-hidden">
-      {/* Decorative SVG background */}
+    <main className="relative flex min-h-screen flex-col items-center justify-center
+      bg-gradient-to-br from-indigo-100 via-white to-green-100 overflow-hidden"
+    >
+      {/* Decorative Blobs */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <svg width="100%" height="100%" className="w-full h-full">
           <ellipse cx="20%" cy="10%" rx="250" ry="100" fill="#6366f1" fillOpacity="0.065" />
@@ -21,14 +23,14 @@ export default function Dashboard() {
       </div>
 
       <div className="relative z-10 w-full max-w-3xl">
-        {/* Logo + Tagline */}
+        {/* Logo and tagline */}
         <div className="flex flex-col items-center justify-center mb-8">
           <Image
             src="/docuright-logo.png"
             alt="DocuRight AI Logo"
             width={80}
             height={80}
-            className="rounded-none drop-shadow-md mb-2"
+            className="mb-2"
             priority
           />
           <div className="text-lg text-gray-500 mt-2 text-center font-semibold">
@@ -83,7 +85,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Multistep Form appears after selection */}
+        {/* Document Forms (if clicked) */}
         {docType === 'nda' && (
           <div>
             <button
@@ -104,7 +106,7 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Polished Footer */}
+      {/* Footer */}
       <footer className="mt-16 z-10 w-full relative text-center text-xs text-gray-400 opacity-90 pb-4">
         © {new Date().getFullYear()} DocuRight AI. All rights reserved.
       </footer>
