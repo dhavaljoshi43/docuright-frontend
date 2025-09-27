@@ -29,3 +29,22 @@ export const generatePdf = async (documentType: string, data: any): Promise<Blob
   // The backend returns the PDF file as a blob.
   return response.blob();
 };
+
+// Add this new function for AI preview
+export const previewAIContent = async (data: any): Promise<any> => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+  const response = await fetch(`${apiUrl}/api/nda/preview-ai-content`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to preview AI content');
+  }
+
+  return response.json();
+};
