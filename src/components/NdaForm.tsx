@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { generatePdf } from '@/lib/api';
+import AnonymousTracker from '@/lib/anonymousTracking';
+import { RegistrationBanner, RegistrationModal, RegistrationGate } from '@/components/RegistrationPrompts';
 
 interface NdaFormData {
   effectiveDate: string;
@@ -70,6 +72,10 @@ export function NdaForm() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewStats, setPreviewStats] = useState({ wordCount: 0, pageCount: 0 });
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  // Add these after your existing state declarations
+  const [showRegistrationBanner, setShowRegistrationBanner] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [showRegistrationGate, setShowRegistrationGate] = useState(false);
 
   const progress = (step / totalSteps) * 100;
 
@@ -123,6 +129,13 @@ export function NdaForm() {
     }
   }, [formData, showPreview, debouncedPreviewUpdate]);
 
+  // Add this after your other useEffect hooks
+  useEffect(() => {
+    if (AnonymousTracker.hasReachedLimit()) {
+      setShowRegistrationGate(true);
+    }
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -175,6 +188,13 @@ export function NdaForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user has reached limit before allowing generation
+    if (AnonymousTracker.hasReachedLimit()) {
+      setShowRegistrationGate(true);
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     setSuccess(false);
@@ -189,11 +209,45 @@ export function NdaForm() {
       window.URL.revokeObjectURL(url);
       a.remove();
       setSuccess(true);
+      
+      // Track the generation
+      AnonymousTracker.trackGeneration('nda', formData);
+      
+      // Determine which prompt to show
+      const promptType = AnonymousTracker.getPromptType();
+      
+      setTimeout(() => {
+        if (promptType === 'banner') {
+          setShowRegistrationBanner(true);
+        } else if (promptType === 'modal') {
+          setShowRegistrationModal(true);
+        } else if (promptType === 'gate') {
+          setShowRegistrationGate(true);
+        }
+      }, 1000);
+      
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred.');
     } finally {
       setIsLoading(false);
     }
+  };
+
+    const handleRegister = () => {
+    // For now, just log - we'll implement actual registration in 4B
+    console.log('Navigate to registration');
+    alert('Registration coming soon! For now, this will redirect to registration page.');
+    // TODO: Navigate to /register page
+  };
+
+  const handleCloseBanner = () => {
+    setShowRegistrationBanner(false);
+    AnonymousTracker.markPromptSeen('banner');
+  };
+
+  const handleCloseModal = () => {
+    setShowRegistrationModal(false);
+    AnonymousTracker.markPromptSeen('modal');
   };
 
   return (
@@ -565,6 +619,32 @@ export function NdaForm() {
           </div>
         </div>
       )}
+
+      {/* Add this right before the final closing </div> */}
+      
+      {/* Registration Prompts */}
+      {showRegistrationBanner && (
+        <RegistrationBanner 
+          onClose={handleCloseBanner}
+          onRegister={handleRegister}
+        />
+      )}
+      
+      {showRegistrationModal && (
+        <RegistrationModal 
+          onClose={handleCloseModal}
+          onRegister={handleRegister}
+          remainingGenerations={AnonymousTracker.getRemainingGenerations()}
+        />
+      )}
+      
+      {showRegistrationGate && (
+        <RegistrationGate 
+          onRegister={handleRegister}
+          totalGenerated={AnonymousTracker.getUserData().generationCount}
+        />
+      )}
+
     </div>
   );
 }
