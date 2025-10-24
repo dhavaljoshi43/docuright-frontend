@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from "next/image";
+import Link from 'next/link';
 import { NdaForm } from '@/components/NdaForm';
 import { OfferLetterForm } from '@/components/OfferLetterForm';
 import { AuthModal } from '@/components/AuthForms';
@@ -32,20 +33,28 @@ export default function Dashboard() {
       </div>
 
       {/* Header with Auth */}
-      <div className="absolute top-0 right-0 p-6 z-20">
+      <div className="absolute top-0 right-0 p-6 z-20 flex items-center space-x-4">
         {isAuthenticated ? (
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-700">{user?.fullName || user?.email}</p>
-              <p className="text-xs text-gray-500">{user?.email}</p>
-            </div>
-            <button
-              onClick={logout}
-              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+          <>
+            <Link
+              href="/dashboard"
+              className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors shadow-sm"
             >
-              Sign Out
-            </button>
-          </div>
+              My Documents
+            </Link>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-700">{user?.fullName || user?.email}</p>
+                <p className="text-xs text-gray-500">{user?.email}</p>
+              </div>
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+              >
+                Sign Out
+              </button>
+            </div>
+          </>
         ) : (
           <button
             onClick={() => setShowAuthModal(true)}

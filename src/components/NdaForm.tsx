@@ -5,6 +5,7 @@ import { generatePdf } from '@/lib/api';
 import AnonymousTracker from '@/lib/anonymousTracking';
 import { RegistrationBanner, RegistrationModal, RegistrationGate } from '@/components/RegistrationPrompts';
 import { AuthModal } from '@/components/AuthForms';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface NdaFormData {
   effectiveDate: string;
@@ -79,6 +80,8 @@ export function NdaForm() {
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showRegistrationGate, setShowRegistrationGate] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  
+  const { isAuthenticated, accessToken } = useAuth();
 
   const progress = (step / totalSteps) * 100;
   
@@ -192,8 +195,7 @@ export function NdaForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Check if user has reached limit before allowing generation
-    if (AnonymousTracker.hasReachedLimit()) {
+    if (!isAuthenticated && AnonymousTracker.hasReachedLimit()) {
       setShowRegistrationGate(true);
       return;
     }
@@ -213,21 +215,32 @@ export function NdaForm() {
       a.remove();
       setSuccess(true);
       
-      // Track the generation
-      AnonymousTracker.trackGeneration('nda', formData);
-      
-      // Determine which prompt to show
-      const promptType = AnonymousTracker.getPromptType();
-      
-      setTimeout(() => {
-        if (promptType === 'banner') {
-          setShowRegistrationBanner(true);
-        } else if (promptType === 'modal') {
-          setShowRegistrationModal(true);
-        } else if (promptType === 'gate') {
-          setShowRegistrationGate(true);
+      if (isAuthenticated && accessToken) {
+        try {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+          await fetch(`${apiUrl}/api/documents/save`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+              documentType: 'nda',
+              formData: formData
+            })
+          });
+        } catch (err) {
+          console.error('Failed to save document history', err);
         }
-      }, 1000);
+      } else {
+        AnonymousTracker.trackGeneration('nda', formData);
+        const promptType = AnonymousTracker.getPromptType();
+        setTimeout(() => {
+          if (promptType === 'banner') setShowRegistrationBanner(true);
+          else if (promptType === 'modal') setShowRegistrationModal(true);
+          else if (promptType === 'gate') setShowRegistrationGate(true);
+        }, 1000);
+      }
       
     } catch (err: any) {
       setError(err.message || 'An unknown error occurred.');
