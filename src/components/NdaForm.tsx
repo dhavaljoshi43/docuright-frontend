@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { generatePdf } from '@/lib/api';
 import AnonymousTracker from '@/lib/anonymousTracking';
 import { RegistrationBanner, RegistrationModal, RegistrationGate } from '@/components/RegistrationPrompts';
+import { AuthModal } from '@/components/AuthForms';
 
 interface NdaFormData {
   effectiveDate: string;
@@ -72,12 +73,21 @@ export function NdaForm() {
   const [showPreview, setShowPreview] = useState(false);
   const [previewStats, setPreviewStats] = useState({ wordCount: 0, pageCount: 0 });
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
-  // Add these after your existing state declarations
+  
+  // Registration prompt state
   const [showRegistrationBanner, setShowRegistrationBanner] = useState(false);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [showRegistrationGate, setShowRegistrationGate] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const progress = (step / totalSteps) * 100;
+  
+  // Check for registration gate on component mount
+  useEffect(() => {
+    if (AnonymousTracker.hasReachedLimit()) {
+      setShowRegistrationGate(true);
+    }
+  }, []);
 
   const hasMinimumData = (data: NdaFormData) => {
     return data.firstPartyName && data.secondPartyName && data.purposeOfNDA;
@@ -128,13 +138,6 @@ export function NdaForm() {
       debouncedPreviewUpdate(formData);
     }
   }, [formData, showPreview, debouncedPreviewUpdate]);
-
-  // Add this after your other useEffect hooks
-  useEffect(() => {
-    if (AnonymousTracker.hasReachedLimit()) {
-      setShowRegistrationGate(true);
-    }
-  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -232,19 +235,19 @@ export function NdaForm() {
       setIsLoading(false);
     }
   };
-
-    const handleRegister = () => {
-    // For now, just log - we'll implement actual registration in 4B
-    console.log('Navigate to registration');
-    alert('Registration coming soon! For now, this will redirect to registration page.');
-    // TODO: Navigate to /register page
+  
+  const handleRegister = () => {
+    setShowAuthModal(true);
+    setShowRegistrationBanner(false);
+    setShowRegistrationModal(false);
+    setShowRegistrationGate(false);
   };
-
+  
   const handleCloseBanner = () => {
     setShowRegistrationBanner(false);
     AnonymousTracker.markPromptSeen('banner');
   };
-
+  
   const handleCloseModal = () => {
     setShowRegistrationModal(false);
     AnonymousTracker.markPromptSeen('modal');
@@ -619,8 +622,6 @@ export function NdaForm() {
           </div>
         </div>
       )}
-
-      {/* Add this right before the final closing </div> */}
       
       {/* Registration Prompts */}
       {showRegistrationBanner && (
@@ -644,7 +645,13 @@ export function NdaForm() {
           totalGenerated={AnonymousTracker.getUserData().generationCount}
         />
       )}
-
+      
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        defaultMode="register"
+      />
     </div>
   );
 }

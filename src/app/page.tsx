@@ -4,20 +4,56 @@ import { useState } from 'react';
 import Image from "next/image";
 import { NdaForm } from '@/components/NdaForm';
 import { OfferLetterForm } from '@/components/OfferLetterForm';
+import { AuthModal } from '@/components/AuthForms';
+import { useAuth } from '@/contexts/AuthContext';
 
 type DocType = 'none' | 'nda' | 'offer';
 
 export default function Dashboard() {
   const [docType, setDocType] = useState<DocType>('none');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-green-100 overflow-hidden">
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        defaultMode="login"
+      />
+
       {/* Decorative SVG background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <svg width="100%" height="100%" className="w-full h-full">
           <ellipse cx="20%" cy="10%" rx="250" ry="100" fill="#6366f1" fillOpacity="0.065" />
           <ellipse cx="85%" cy="80%" rx="280" ry="120" fill="#22c55e" fillOpacity="0.07" />
         </svg>
+      </div>
+
+      {/* Header with Auth */}
+      <div className="absolute top-0 right-0 p-6 z-20">
+        {isAuthenticated ? (
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <p className="text-sm font-medium text-gray-700">{user?.fullName || user?.email}</p>
+              <p className="text-xs text-gray-500">{user?.email}</p>
+            </div>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAuthModal(true)}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-lg"
+          >
+            Sign In
+          </button>
+        )}
       </div>
 
       <div className="relative z-10 w-full max-w-3xl">
