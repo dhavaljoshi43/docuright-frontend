@@ -49,12 +49,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           });
           
           if (!response.ok) {
-            // Token invalid, clear auth
-            handleLogout();
+            // Token invalid, try to refresh
+            await refreshToken();
           }
         } catch (error) {
           console.error('Token validation failed:', error);
-          handleLogout();
+          // Try refresh before logging out
+          try {
+            await refreshToken();
+          } catch (refreshError) {
+            handleLogout();
+          }
         }
       }
       
@@ -63,6 +68,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     loadUser();
   }, [API_URL]);
+
+  // Auto refresh token before expiry
+  useEffect(() => {
+    if (!accessToken) return;
+
+    // Refresh token every 50 minutes (token expires in 60 minutes)
+    const refreshInterval = setInterval(() => {
+      refreshToken().catch(() => {
+        console.log('Auto refresh failed');
+        handleLogout();
+      });
+    }, 50 * 60 * 1000); // 50 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, [accessToken]);
 
   const login = async (email: string, password: string) => {
     try {
