@@ -6,10 +6,13 @@ import ModernNdaForm from '@/components/documents/ModernNdaForm';
 import { OfferLetterForm } from '@/components/OfferLetterForm';
 import { AuthModal } from '@/components/AuthForms';
 import { useAuth } from '@/contexts/AuthContext';
-import { 
-  FileText, Zap, Users, TrendingUp, Clock, CheckCircle,
-  ArrowRight, Plus, Sparkles, Shield, BarChart3, Bell,
-  Settings, LogOut
+
+import {
+  FileText, Users, MapPin, Calendar, Building, Sparkles,
+  Save, Eye, Download, ChevronRight, AlertCircle, Check,
+  Zap, Shield, Scale, ArrowLeft, TrendingUp, Clock, CheckCircle, 
+  ArrowRight, Search,  Settings, LogOut, Menu, X, Briefcase, Plus, 
+  FileCheck, Mail, BarChart3, Bell 
 } from 'lucide-react';
 
 type DocType = 'none' | 'nda' | 'offer';
