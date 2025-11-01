@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { NdaForm } from '@/components/NdaForm';
 import ModernNdaForm from '@/components/documents/ModernNdaForm';
 import { OfferLetterForm } from '@/components/OfferLetterForm';
@@ -23,10 +23,10 @@ export default function Dashboard() {
   const { user, isAuthenticated, logout } = useAuth();
 
   const stats = [
-    { label: 'Total Documents', value: '24', change: '+12%', icon: FileText, color: 'primary' },
-    { label: 'Active Workflows', value: '8', change: '+3', icon: TrendingUp, color: 'warning' },
-    { label: 'Completed', value: '16', change: '100%', icon: CheckCircle, color: 'success' },
-    { label: 'Pending', value: '5', change: '-2', icon: Clock, color: 'secondary' }
+    { label: 'Total Documents', value: '24', change: '+12%', icon: FileText, colorClass: 'from-primary-500 to-primary-600' },
+    { label: 'Active Workflows', value: '8', change: '+3', icon: TrendingUp, colorClass: 'from-warning-500 to-warning-600' },
+    { label: 'Completed', value: '16', change: '100%', icon: CheckCircle, colorClass: 'from-success-500 to-success-600' },
+    { label: 'Pending', value: '5', change: '-2', icon: Clock, colorClass: 'from-secondary-500 to-secondary-600' }
   ];
 
   const quickActions = [
@@ -47,14 +47,14 @@ export default function Dashboard() {
     {
       title: 'Service Agreement',
       description: 'Define service delivery terms',
-      icon: FileText,
+      icon: FileCheck,
       color: 'from-secondary-500 to-secondary-600',
       action: 'service'
     },
     {
       title: 'Offer Letter',
       description: 'Professional employment offers',
-      icon: Zap,
+      icon: Mail,
       color: 'from-warning-500 to-warning-600',
       action: 'offer'
     }
@@ -169,26 +169,53 @@ export default function Dashboard() {
             {/* Stats Grid */}
             {isAuthenticated && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                {stats.map((stat, index) => (
-                  <div 
-                    key={stat.label}
-                    className="glass-card p-6 hover:scale-105 transition-all duration-300 cursor-pointer animate-slide-up"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className={`w-12 h-12 bg-gradient-to-br from-${stat.color}-500 to-${stat.color}-600 rounded-xl flex items-center justify-center shadow-lg`}>
-                        <stat.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <span className={`text-sm font-semibold ${
-                        stat.change.startsWith('+') ? 'text-success-600' : 'text-dark-600'
-                      }`}>
-                        {stat.change}
-                      </span>
+                {/* Total Documents */}
+                <div className="glass-card p-6 hover:scale-105 transition-all duration-300 cursor-pointer animate-slide-up">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <FileText className="w-6 h-6 text-white" strokeWidth={2.5} />
                     </div>
-                    <div className="text-3xl font-bold text-dark-900 mb-1">{stat.value}</div>
-                    <div className="text-sm text-dark-600">{stat.label}</div>
+                    <span className="text-sm font-semibold text-success-600">+12%</span>
                   </div>
-                ))}
+                  <div className="text-3xl font-bold text-dark-900 mb-1">24</div>
+                  <div className="text-sm text-dark-600">Total Documents</div>
+                </div>
+                
+                {/* Active Workflows */}
+                <div className="glass-card p-6 hover:scale-105 transition-all duration-300 cursor-pointer animate-slide-up" style={{ animationDelay: '100ms' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-warning-500 to-warning-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-sm font-semibold text-success-600">+3</span>
+                  </div>
+                  <div className="text-3xl font-bold text-dark-900 mb-1">8</div>
+                  <div className="text-sm text-dark-600">Active Workflows</div>
+                </div>
+                
+                {/* Completed */}
+                <div className="glass-card p-6 hover:scale-105 transition-all duration-300 cursor-pointer animate-slide-up" style={{ animationDelay: '200ms' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-success-500 to-success-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <CheckCircle className="w-6 h-6 text-white" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-sm font-semibold text-dark-600">100%</span>
+                  </div>
+                  <div className="text-3xl font-bold text-dark-900 mb-1">16</div>
+                  <div className="text-sm text-dark-600">Completed</div>
+                </div>
+                
+                {/* Pending */}
+                <div className="glass-card p-6 hover:scale-105 transition-all duration-300 cursor-pointer animate-slide-up" style={{ animationDelay: '300ms' }}>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg">
+                      <Clock className="w-6 h-6 text-white" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-sm font-semibold text-dark-600">-2</span>
+                  </div>
+                  <div className="text-3xl font-bold text-dark-900 mb-1">5</div>
+                  <div className="text-sm text-dark-600">Pending</div>
+                </div>
               </div>
             )}
 
@@ -199,29 +226,66 @@ export default function Dashboard() {
                 Quick Actions
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {quickActions.map((action, index) => (
-                  <button
-                    key={action.action}
-                    onClick={() => {
-                      if (action.action === 'nda') {
-                        setDocType('nda');
-                      } else if (action.action === 'offer') {
-                        setDocType('offer');
-                      }
-                    }}
-                    className="glass-card p-6 text-left hover:scale-105 transition-all duration-300 group animate-scale-in cursor-pointer"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-shadow`}>
-                      <action.icon className="w-7 h-7 text-white" />
-                    </div>
-                    <h4 className="font-bold text-lg mb-2 text-dark-900">{action.title}</h4>
-                    <p className="text-sm text-dark-600 mb-4">{action.description}</p>
-                    <div className="flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
-                      Get Started <ArrowRight className="w-4 h-4" />
-                    </div>
-                  </button>
-                ))}
+                {/* Create NDA */}
+                <button
+                  onClick={() => setDocType('nda')}
+                  className="glass-card p-6 text-left hover:scale-105 transition-all duration-300 group animate-scale-in cursor-pointer"
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-shadow">
+                    <Shield className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h4 className="font-bold text-lg mb-2 text-dark-900">Create NDA</h4>
+                  <p className="text-sm text-dark-600 mb-4">Generate a new Non-Disclosure Agreement</p>
+                  <div className="flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </div>
+                </button>
+                
+                {/* Employment Agreement */}
+                <button
+                  className="glass-card p-6 text-left hover:scale-105 transition-all duration-300 group animate-scale-in cursor-pointer"
+                  style={{ animationDelay: '100ms' }}
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-shadow">
+                    <Users className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h4 className="font-bold text-lg mb-2 text-dark-900">Employment Agreement</h4>
+                  <p className="text-sm text-dark-600 mb-4">Create employment contract</p>
+                  <div className="flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </div>
+                </button>
+                
+                {/* Service Agreement */}
+                <button
+                  className="glass-card p-6 text-left hover:scale-105 transition-all duration-300 group animate-scale-in cursor-pointer"
+                  style={{ animationDelay: '200ms' }}
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-secondary-500 to-secondary-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-shadow">
+                    <FileCheck className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h4 className="font-bold text-lg mb-2 text-dark-900">Service Agreement</h4>
+                  <p className="text-sm text-dark-600 mb-4">Define service delivery terms</p>
+                  <div className="flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </div>
+                </button>
+                
+                {/* Offer Letter */}
+                <button
+                  onClick={() => setDocType('offer')}
+                  className="glass-card p-6 text-left hover:scale-105 transition-all duration-300 group animate-scale-in cursor-pointer"
+                  style={{ animationDelay: '300ms' }}
+                >
+                  <div className="w-14 h-14 bg-gradient-to-br from-warning-500 to-warning-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-glow transition-shadow">
+                    <Mail className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h4 className="font-bold text-lg mb-2 text-dark-900">Offer Letter</h4>
+                  <p className="text-sm text-dark-600 mb-4">Professional employment offers</p>
+                  <div className="flex items-center gap-2 text-primary-600 font-semibold group-hover:gap-3 transition-all">
+                    Get Started <ArrowRight className="w-4 h-4" />
+                  </div>
+                </button>
               </div>
             </div>
 
