@@ -3,7 +3,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import UserDashboard from '@/components/UserDashboard';
+import WorkflowDashboard from '@/components/workflow/WorkflowDashboard';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function DashboardPage() {
@@ -32,5 +32,5 @@ export default function DashboardPage() {
     return null; // Will redirect in useEffect
   }
 
-  return <UserDashboard />;
+  return <WorkflowDashboard />;
 }
